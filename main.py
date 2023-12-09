@@ -1,3 +1,12 @@
-import tiktoken
+from langchain.llms.openai import OpenAI
+from langchain.chat_models import ChatOpenAI
 
-print(tiktoken)
+
+llm = OpenAI()
+chat = ChatOpenAI()
+
+a = llm.predict("How many planets are there?")
+b = chat.predict("안녕?")
+
+
+print(b)
