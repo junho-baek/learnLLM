@@ -1,11 +1,10 @@
-from langchain.llms.openai import OpenAI
 from langchain.chat_models import ChatOpenAI
 
 
-llm = OpenAI()
-chat = ChatOpenAI()
 
-a = llm.predict("How many planets are there?")
+chat = ChatOpenAI(temperature=0.1)
+
+
 b = chat.predict("안녕?")
 
 
