@@ -1,0 +1,19 @@
+run = ["bash", "main.sh"]
+
+entrypoint = "main.sh"
+modules = ["python-3.10:v25-20230920-d4ad2e4"]
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["bash", "main.sh"]
+
+[languages]
+
+[languages.bash]
+pattern = "**/{*.sh,*.bash}"
+
+[languages.bash.languageServer]
+start = "bash-language-server start"
+deploymentTarget = "cloudrun"
