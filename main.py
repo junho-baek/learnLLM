@@ -1,31 +1,38 @@
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts import PromptTemplate, ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate
 
 chat = ChatOpenAI(temperature=0.1)
 
-# template = PromptTemplate.from_template("What is the distance between {country_a} and {country_b}?")
+from langchain.schema import BaseOutputParser
 
-# prompt = template.format(country_a="South Korea", country_b="Japan")
-
-# print(chat.predict(prompt))
-
+class CommaOutputParser(BaseOutputParser):
+  def parse(self, text):
+    items = text.strip().split(",")
+    return list(map(str.strip, items)) #, 를 기준으로 텍스트를 나눠서 리스트로 만듬!
 
 template = ChatPromptTemplate.from_messages(
   [
-  ("system", "You are a geography expert. And you only reply in {language}"),
-  ("ai", "Hi, my name is {name}"),
-  ("human", "What is the distance between {country_a} and {country_b}?. Also, what is your name?")
-
+    ("system","You are a list generating machine. Everything you are asked will be answered with a comma separated list of max {max_items} in lowercase.Do NOT reply with anything else."),
+    ("human", "{question}")
   ]
 )
 
-prompt = template.format_messages(
-  language="korean",
-  name="탱이",
-  country_a="South Korea",
-  country_b="Japan"
-)
-
-print(chat.predict_messages(prompt))
+# prompt = template.format_messages(
+#   max_items=10,
+#   question="외우면 좋은 수준 높은 회화 영어 단어?"
+# )
+# result = chat.predict_messages(prompt)
 
 
+
+# p = CommaOutputParser()
+
+# print(p.parse(result.content))
+
+chain = template | chat | CommaOutputParser()
+
+result = chain.invoke({
+  "max_items": 10,
+  "question": "What are the top 10 most popular programming languages?"
+})
+print(result)
