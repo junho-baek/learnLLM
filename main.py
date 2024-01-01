@@ -1,8 +1,10 @@
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
+from langchain.prompts import example_selector
+from langchain.prompts.few_shot import FewShotPromptTemplate
 from langchain.callbacks import StreamingStdOutCallbackHandler
-
+from langchain.prompts.prompt import PromptTemplate
+from langchain.prompts.example_selector.base import BaseExampleSelector
+from langchain.prompts.example_selector import LengthBasedExampleSelector  # 길이기반으로 예제들을 선택해준다.
 
 chat = ChatOpenAI(temperature=0.1,
                   streaming=True,
@@ -46,26 +48,33 @@ Currency: Euro
 """,
     },
 ]
+#exampleSelector는 아래와 같은 메서드를 가지고 있어야 합니다. add, select_examples
+class RandomExampleSelector(BaseExampleSelector):
+  def __init__(self, examples):
+      self.examples = examples
 
-example_prompt = ChatPromptTemplate.from_messages(
-    [("human", "What do you know about {question}?"),
-    ("ai", "{answer}")
-    ])
+  def add_example(self, example):
+      self.examples.append(example)
 
-example_prompt = FewShotChatMessagePromptTemplate(
-    example_prompt=example_prompt,
+  def select_examples(self, input_variables):
+      from random import choice
+
+      return [choice(self.examples)]
+
+
+example_prompt = PromptTemplate.from_template("Human: {question}\nAI:{answer}")
+
+example_selector = RandomExampleSelector(
     examples=examples,
 )
-final_prompt = ChatPromptTemplate.from_messages([
-  ("system", "You are a geography expert, you give short answers."),
-  example_prompt,
-  ("human", "What do you know about {country}"),
-])
-
-chain = final_prompt | chat
-
-chain.invoke(
-  {
-    "country": "태국"
-  }
+# 개체가 생성될 때 이미 예제들을 넣어둠
+print(example_selector)
+prompt = FewShotPromptTemplate(
+    example_prompt=example_prompt,
+    example_selector=example_selector, # 개체를 받는 파라미터
+    suffix="Human: What do you know about {country}?",
+    input_variables=["country"],
 )
+
+
+print(prompt.format(country="Brazil"))
