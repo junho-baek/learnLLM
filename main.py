@@ -1,8 +1,8 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from langchain.prompts.few_shot import FewShotPromptTemplate
+from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
 from langchain.callbacks import StreamingStdOutCallbackHandler
-from langchain.prompts.prompt import PromptTemplate
+
 
 chat = ChatOpenAI(temperature=0.1,
                   streaming=True,
@@ -47,20 +47,25 @@ Currency: Euro
     },
 ]
 
-example_prompt = PromptTemplate.from_template(
-    "Human: {question}\nAI: {answer}\n")
+example_prompt = ChatPromptTemplate.from_messages(
+    [("human", "What do you know about {question}?"),
+    ("ai", "{answer}")
+    ])
 
-prompt = FewShotPromptTemplate(
+example_prompt = FewShotChatMessagePromptTemplate(
     example_prompt=example_prompt,
     examples=examples,
-    suffix="Human: What do you know about {country}?",
-    input_variables=["country"])
+)
+final_prompt = ChatPromptTemplate.from_messages([
+  ("system", "You are a geography expert, you give short answers."),
+  example_prompt,
+  ("human", "What do you know about {country}"),
+])
 
-
-chain = prompt | chat
+chain = final_prompt | chat
 
 chain.invoke(
   {
-    "country": "Korea"
+    "country": "태국"
   }
 )
