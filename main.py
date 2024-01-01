@@ -22,10 +22,10 @@ veg_chain = veg_chef_prompt | chat
 
 final_chain = {"recipe": chef_chain} | veg_chain
 
-print(final_chain.invoke({
+final_chain.invoke({
   "cuisine": "Korean"
 })
-)
+
 
 # Great choice! Korean cuisine is known for its bold flavors and unique combinations. Let's start with a classic Korean dish called Bibimbap. It's a delicious and nutritious rice bowl topped with various vegetables, meat, and a fried egg. Here's a simple recipe for you:
 

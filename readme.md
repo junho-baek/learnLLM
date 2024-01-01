@@ -2,5 +2,4 @@
 ## source ~/.bashrc 
 ## venv, run 이용 가능
 ## alias
-## alias venv='source env/bin/activate'
-## alias run='python main.py'
+## alias venv='source env/bin/activate';alias run='python main.py'
