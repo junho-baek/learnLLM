@@ -1,33 +1,13 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.callbacks import get_openai_callback
 
-chat = ChatOpenAI(
-    temperature=0.1,
-)
+# 전통적인 방법의 모든 대화내용을 메모리화 하는 모듈
+# 자동완성과 같은 일회성 기능에 유용하다.
+# chat 모델에는 비용적으로 부적합하다.
+from langchain.memory import ConversationBufferMemory
 
-
-with get_openai_callback() as usage:
-    a = chat.predict("What is the recipe for soju")
-    b = chat.predict("What is the recipe for bread")
-    print(a, "\n")
-    print(b, "\n")
-    print(usage)
+memory = ConversationBufferMemory(return_messages=True)
+# return_messages=True 옵션을 넣어주면 메세지 형식으로 메모리를 불러온다. 챗봇을 위한 옵션, False인 경우에는 메모리를 스트링 형식으로 불러온다.
 
 
-#사용량에 대해서 알 수 있다.
+memory.save_context({"input": "Hi"}, {"output": "How are you?"})
 
-from langchain.chat_models import ChatOpenAI
-from langchain.llms.openai import OpenAI
-
-chat = OpenAI(
-  temperature = 0.1,
-  max_tokens = 450,
-  model = "gpt-3.5-turbo-16k"
-)
-
-chat.save("model.json") # chat 설정을 저장.
-
-
-from langchain.llms.loading import load_llm
-
-chat = load_llm("model.json") # 모델을 불러올 수도 있다.
+print(memory.load_memory_variables({}))
