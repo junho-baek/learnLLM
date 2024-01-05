@@ -1,13 +1,18 @@
+#대화의 특정부분만 저장하는 모듈
+from langchain.memory import ConversationBufferWindowMemory
 
-# 전통적인 방법의 모든 대화내용을 메모리화 하는 모듈
-# 자동완성과 같은 일회성 기능에 유용하다.
-# chat 모델에는 비용적으로 부적합하다.
-from langchain.memory import ConversationBufferMemory
-
-memory = ConversationBufferMemory(return_messages=True)
-# return_messages=True 옵션을 넣어주면 메세지 형식으로 메모리를 불러온다. 챗봇을 위한 옵션, False인 경우에는 메모리를 스트링 형식으로 불러온다.
+#k 는 몇 개의 데이터를 저장할 지 설정하는 파라미터
+memory = ConversationBufferWindowMemory(return_messages=True, k=4)
 
 
-memory.save_context({"input": "Hi"}, {"output": "How are you?"})
+def add_message(input, output):
+  memory.save_context({"input": input}, {"output": output})
 
+
+add_message(0, 0)
+add_message(1, 0)
+add_message(2, 0)
+add_message(3, 0)
+add_message(4, 0)
+# 최근 대화 메모리만 저장되어서 대화의 전반부 내용을 저장하기 어려울 수 있다.
 print(memory.load_memory_variables({}))
