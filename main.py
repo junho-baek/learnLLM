@@ -1,14 +1,17 @@
 
-# 대화 내용을 자체적으로 요약해서 저장해주는 모델
-# 대화 내용이 짧으면 더 많은 토큰을 소비할 수 있겠지만, 길면 길수록 효율적으로 저장할 수 있는 모델
-
-from langchain.memory import ConversationSummaryMemory
+# 메모리에n설정한 메세지의 수 넘어가면 요약해서 저장
+# 최근 대화에 더 중점을 두고 있는 요약 모델
+from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chat_models import ChatOpenAI
 
 llm = ChatOpenAI(temperature=0.1)
 
 
-memory = ConversationSummaryMemory(llm=llm)
+memory = ConversationSummaryBufferMemory(
+  llm=llm,
+  max_token_limit = 150,
+  return_messages=True
+)
 
 def add_message(input, output):
   memory.save_context({"input": input}, {"output": output})
