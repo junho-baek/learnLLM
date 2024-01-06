@@ -1,18 +1,24 @@
-#대화의 특정부분만 저장하는 모듈
-from langchain.memory import ConversationBufferWindowMemory
 
-#k 는 몇 개의 데이터를 저장할 지 설정하는 파라미터
-memory = ConversationBufferWindowMemory(return_messages=True, k=4)
+# 대화 내용을 자체적으로 요약해서 저장해주는 모델
+# 대화 내용이 짧으면 더 많은 토큰을 소비할 수 있겠지만, 길면 길수록 효율적으로 저장할 수 있는 모델
+from langchain.memory import ConversationSummaryMemory
+from langchain.chat_models import ChatOpenAI
 
+llm = ChatOpenAI(temperature=0.1)
+
+
+memory = ConversationSummaryMemory(llm=llm)
 
 def add_message(input, output):
   memory.save_context({"input": input}, {"output": output})
 
+def get_history():
+  return memory.load_memory_variables({})
 
-add_message(0, 0)
-add_message(1, 0)
-add_message(2, 0)
-add_message(3, 0)
-add_message(4, 0)
-# 최근 대화 메모리만 저장되어서 대화의 전반부 내용을 저장하기 어려울 수 있다.
-print(memory.load_memory_variables({}))
+
+add_message(input="안녕 나는 준호고 남한에 살고 있어", output="와 그거 멋진데?")
+
+
+add_message(input="남한은 매우 멋져", output="나도 갈 수 있으면 좋겠다..")
+
+print(get_history())
