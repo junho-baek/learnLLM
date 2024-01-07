@@ -1,24 +1,33 @@
-# knowledge graph
-# 중요도에 따라 요약해준다
-from langchain.memory import ConversationKGMemory
+from langchain.memory import ConversationSummaryBufferMemory 
+
 from langchain.chat_models import ChatOpenAI
 
-llm = ChatOpenAI(temperature=0.1)
+from langchain.chains import LLMChain
 
+from langchain.prompts import PromptTemplate
 
-memory = ConversationKGMemory(
+llm = ChatOpenAI (temperature=0.1)
+memory = ConversationSummaryBufferMemory(
   llm=llm,
-  return_messages=True
+  max_token_limit=120,
+  memory_key="chat_history",
 )
 
-def add_message(input, output):
-  memory.save_context({"input": input}, {"output": output})
+template = """
+    You are a helpful AI talking to a human.
 
+    {chat_history}
+    Human:{question}
+    You:
+"""
+chain = LLMChain(
+  llm=llm,
+  memory=memory,
+  prompt= PromptTemplate.from_template(template),
+  verbose=True #프롬프트 로그들을 확인할 수 있는 프로퍼티
+)
+print(chain.predict(question="What is the capital of France?"))
 
+print(chain.predict(question="I live in Seoul"))
 
-# 저장
-add_message("say hi to sam", "who is sam")
-add_message("sam is a friend", "okay")
-
-# 출력
-print(memory.load_memory_variables({"input": "who is sam"}))
+print(memory.load_memory_variables({}))
