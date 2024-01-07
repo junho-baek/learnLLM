@@ -1,34 +1,39 @@
-from langchain.memory import ConversationSummaryBufferMemory 
-
+from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chat_models import ChatOpenAI
-
-from langchain.chains import LLMChain
-
+from langchain.schema.runnable import RunnablePassthrough #메모리를 불러오는걸 자동으로 해주는 모듈
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-llm = ChatOpenAI (temperature=0.1)
+llm = ChatOpenAI(temperature=0.1)
+
 memory = ConversationSummaryBufferMemory(
-  llm=llm,
-  max_token_limit=120,
-  memory_key="chat_history",
-  return_messages=True,
+    llm=llm,
+    max_token_limit=120,
+    return_messages=True,
 )
 
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "You are a helpful AI talking to a human"),
-        MessagesPlaceholder(variable_name="chat_history"),#채팅 기록을 남긴다.
+        MessagesPlaceholder(variable_name="history"),
         ("human", "{question}"),
     ]
 )
-chain = LLMChain(
-  llm=llm,
-  memory=memory,
-  prompt= prompt,
-  verbose=True #프롬프트 로그들을 확인할 수 있는 프로퍼티
-)
-print(chain.predict(question="What is the capital of France?"))
 
-print(chain.predict(question="I live in Seoul"))
 
-print(memory.load_memory_variables({}))
+def load_memory(_):
+    return memory.load_memory_variables({})["history"]#저장된 내용을 불러오기
+
+# 첫 체인이 작동할 때 1개의 파라미터가 있어야해서 그런 함수를 설정
+chain = RunnablePassthrough.assign(history=load_memory) | prompt | llm
+
+
+def invoke_chain(question):
+    result = chain.invoke({"question": question})
+    memory.save_context(
+        {"input": question},
+        {"output": result.content},
+    )#메모리에 저장
+    print(result)
+
+invoke_chain("My name is nico")
+invoke_chain("What is my name?")
