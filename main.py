@@ -37,3 +37,6 @@ def invoke_chain(question):
 
 invoke_chain("My name is nico")
 invoke_chain("What is my name?")
+
+
+# rag
