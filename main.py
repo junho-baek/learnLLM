@@ -1,42 +1,32 @@
-from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chat_models import ChatOpenAI
-from langchain.schema.runnable import RunnablePassthrough #메모리를 불러오는걸 자동으로 해주는 모듈
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+# from langchain.document_loaders import TextLoader
+# loader = TextLoader('./files/chapter_one.txt')
+# from langchain.document_loaders import PyPDFLoader
+# loader = PyPDFLoader('./files/sample.pdf')
+# 각각의 파일 로더가 아니라 구조화되어 있지 않은 파일을 불러오는 모듈
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter #일반적인 방법의 텍스트 분할 모듈
+from langchain.text_splitter import CharacterTextSplitter #문자 단위로 분할하는 모듈
 
-llm = ChatOpenAI(temperature=0.1)
+# splitter = RecursiveCharacterTextSplitter(
+#   chunk_size = 200,
+#   chunk_overlap = 50 #문장을 다 잘라먹을 경우에 앞 조각의 끝부분을 조금 가져와서 이어붙임.
+# )
 
-memory = ConversationSummaryBufferMemory(
-    llm=llm,
-    max_token_limit=120,
-    return_messages=True,
+splitter = CharacterTextSplitter(
+  separator="\n",
+  chunk_size = 600,
+  chunk_overlap = 100,
+  # length_function = len
 )
 
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", "You are a helpful AI talking to a human"),
-        MessagesPlaceholder(variable_name="history"),
-        ("human", "{question}"),
-    ]
-)
+# loader = UnstructuredFileLoader('./files/sample.pdf')
+
+loader = UnstructuredFileLoader('./files/demo.docx')
 
 
-def load_memory(_):
-    return memory.load_memory_variables({})["history"]#저장된 내용을 불러오기
-
-# 첫 체인이 작동할 때 1개의 파라미터가 있어야해서 그런 함수를 설정
-chain = RunnablePassthrough.assign(history=load_memory) | prompt | llm
+documents = loader.load_and_split(text_splitter=splitter)
 
 
-def invoke_chain(question):
-    result = chain.invoke({"question": question})
-    memory.save_context(
-        {"input": question},
-        {"output": result.content},
-    )#메모리에 저장
-    print(result)
 
-invoke_chain("My name is nico")
-invoke_chain("What is my name?")
-
-
-# rag
+print(documents[0].page_content)
