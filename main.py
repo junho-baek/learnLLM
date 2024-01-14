@@ -20,3 +20,5 @@ documents = loader.load_and_split(text_splitter=splitter)
 
 
 print(documents[0].page_content)
+
+##6.3 Vectors (11:56)
