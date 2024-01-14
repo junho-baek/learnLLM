@@ -46,3 +46,5 @@ vectorstore = Chroma.from_documents(documents=docs, embedding=cached_embeddings)
 
 
 result = vectorstore.similarity_search("Where does winston live")
+
+#6.5 Langsmith (01:48)
