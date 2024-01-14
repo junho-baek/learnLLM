@@ -1,24 +1,48 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import CharacterTextSplitter
+# 벡터단위로 임베딩하는 모듈
+from langchain.embeddings import OpenAIEmbeddings, CacheBackedEmbeddings
+#벡터를 저장하는 공간
+from langchain.vectorstores import Chroma
+from langchain.storage import LocalFileStore
+
+cache_dir = LocalFileStore("./cache/")
+
+
+# embedder = OpenAIEmbeddings()
+
+# 단어 하나
+# vector = embedder.embed_query("Hi")
+# print(vector)
+
+# rank = len(vector)
+
+# print(rank)
+
+# 단어 여러개
+# words = ["Hi", "Hello", "Bye", "Goodbye", "Thank you", "Thanks", "You're welcome", "Yes", "No", "Sorry"]
+# vectors = embedder.embed_documents(words)
+
+# print(vectors)
 
 splitter = CharacterTextSplitter.from_tiktoken_encoder(
   separator="\n",
-  chunk_size = 600,
-  chunk_overlap = 100,
-  # length_function = len #얼마나 많은 문자를 사용하는지 len 함수를 이용해서 알려줌.
+  chunk_size=600,
+  chunk_overlap=100
 )
-# 토크나이져로 모델이 진짜로 보는 토큰 단위를 끝어서 볼 수 있다. 토큰이란 문자를 단어조차 아닌 특정 접두 접미를 숫자를 부여해서 인공지능의 예측할 수 있는 학습데이터의 원형이라고 볼 수 있다.
+loader = UnstructuredFileLoader("./files/chapter_one.txt")
+docs = loader.load_and_split(text_splitter=splitter)
 
-# ticktoken 은 오픈에이아이에서 만든거다.
+embeddings = OpenAIEmbeddings()
 
-loader = UnstructuredFileLoader('./files/demo.docx')
+cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+  embeddings,
+  cache_dir
+)
 
 
-documents = loader.load_and_split(text_splitter=splitter)
+vectorstore = Chroma.from_documents(documents=docs, embedding=cached_embeddings)
 
 
-
-print(documents[0].page_content)
-
-##6.3 Vectors (11:56)
+result = vectorstore.similarity_search("Where does winston live")
