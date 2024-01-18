@@ -35,3 +35,6 @@ chain = RetrievalQA.from_chain_type(
 )
 
 print(chain.run("Describe Victory Mansions"))
+
+
+# load, split, embed(vector), cahce vector, vectorstore, chain(retrivalQA) 등을 배움
