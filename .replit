@@ -5,10 +5,13 @@ entrypoint = "main.sh"
 modules = ["python-3.10:v25-20230920-d4ad2e4"]
 
 [nix]
-channel = "stable-22_11"
+channel = "stable-23_05"
+
 
 [deployment]
-run = ["bash", "main.sh"]
+run = ["venv;", "streamlit", "run", "--server.address", "0.0.0.0", "--server.headless", "true", "--server.enableCORS=false", "--server.enableWebsocketCompression=false", "--server.runOnSave=false", "Home.py"]
+ignorePorts = false
+deploymentTarget = "gce"
 
 [languages]
 
@@ -18,3 +21,7 @@ pattern = "**/{*.sh,*.bash}"
 [languages.bash.languageServer]
 start = "bash-language-server start"
 deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 3000
+externalPort = 8099

@@ -3,4 +3,11 @@
 ## venv, run 이용 가능
 ## alias
 ## alias venv='source env/bin/activate';alias run='python main.py';
+alias start='streamlit run --server.address 0.0.0.0 --server.headless true --server.enableCORS=false --server.enableWebsocketCompression=false --server.runOnSave=false Home.py'
 
+
+하고 run 누르면 웹뷰가 보이네 ;; ㅋㅋ
+
+
+
+streamlit run --server.address 0.0.0.0 --server.headless true --server.enableCORS=false --server.enableWebsocketCompression=false --server.runOnSave=false Home.py

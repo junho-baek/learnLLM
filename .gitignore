@@ -3,3 +3,8 @@
 files/
 .cache/
 cache/
+.pythonlibs
+.upm
+.replit
+replit.nix
+.config

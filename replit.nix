@@ -1,5 +1,53 @@
 { pkgs }: {
   deps = [
+    pkgs.opencv
+    pkgs.util-linux
+    pkgs.jre
+    pkgs.awsebcli
+    pkgs.openssl
+    pkgs.playwright-driver
+    pkgs.gitFull
+    pkgs.tk
+    pkgs.tcl
+    pkgs.qhull
+    pkgs.gtk3
+    pkgs.gobject-introspection
+    pkgs.ghostscript
+    pkgs.freetype
+    pkgs.cairo
+    pkgs.antlr
+    pkgs.zlib
+    pkgs.xcodebuild
+    pkgs.which
+    pkgs.libpng
+    pkgs.libjpeg_turbo
+    pkgs.gdb
+    pkgs.libcxx
+    pkgs.cacert
+    pkgs.taskflow
+    pkgs.rapidfuzz-cpp
+    pkgs.chromedriver
+    pkgs.glibc
+    pkgs.poppler_utils
+    pkgs.gtest
+    pkgs.abseil-cpp
+    pkgs.bash
+    pkgs.tesseract
+    pkgs.libffi
+    pkgs.re2
+    pkgs.oneDNN
+    pkgs.xsimd
+    pkgs.libxcrypt
+    pkgs.ffmpeg-full
+    pkgs.glibcLocales
+    pkgs.pkg-config
+    pkgs.arrow-cpp
+    pkgs.file
+    pkgs.rustc
+    pkgs.libiconv
+    pkgs.cargo
+    pkgs.pandoc
+    pkgs.zeromq
     pkgs.vim
     pkgs.bashInteractive
     pkgs.nodePackages.bash-language-server
