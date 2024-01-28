@@ -6,6 +6,9 @@
 alias start='streamlit run --server.address 0.0.0.0 --server.headless true --server.enableCORS=false --server.enableWebsocketCompression=false --server.runOnSave=false Home.py'
 
 
+
+https://3977d93c-75b5-446c-b08e-b59ff961400a-00-2b3qc6ew0nbty.sisko.replit.dev
+
 하고 run 누르면 웹뷰가 보이네 ;; ㅋㅋ
 
 

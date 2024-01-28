@@ -8,3 +8,5 @@ cache/
 .replit
 replit.nix
 .config
+pyproject.toml
+poetry.lock
